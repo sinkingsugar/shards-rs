@@ -18,25 +18,18 @@ pub use shards::*;
 // Re-export language
 pub use shards_lang;
 
+// Re-export fileops (forces linking of shardsRegister_fileops_rust)
+pub use shards_fileops;
+
+// CR-SQLite bundle disabled due to package resolution issues
+// pub use crsql_bundle;
+
 // Conditional re-exports based on features
-#[cfg(feature = "gfx")]
-pub use gfx;
-
-#[cfg(feature = "egui")]
-pub use shards_egui_register;
-
-#[cfg(feature = "egui")]
-pub use shards_inputs_debug_ui;
-
-// Force FFI symbols to be linked (called from C++)
-// Wrapper for raw pointer to implement Sync
-struct FnPtr(*const ());
-unsafe impl Sync for FnPtr {}
-
-#[cfg(feature = "egui")]
-#[used]
-static _FORCE_LINK_DEBUG_UI: FnPtr =
-    FnPtr(shards_inputs_debug_ui::shards_input_showDebugUI as *const ());
+// GFX/EGUI disabled for now - need nested workspace support
+// #[cfg(feature = "gfx")]
+// pub use gfx;
+// #[cfg(feature = "egui")]
+// pub use shards_egui_register;
 
 #[cfg(feature = "ml")]
 pub use shards_ml;
