@@ -1,0 +1,2 @@
+[env]
+CRSQLITE_COMMIT_SHA = "dev"

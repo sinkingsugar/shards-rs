@@ -1,0 +1,10 @@
+/target
+Cargo.lock
+*.swp
+*.swo
+.DS_Store
+*.log
+
+# Shards source - use symlink for local dev, submodule for distribution
+# To set up: git submodule add https://github.com/fragcolor-xyz/shards.git shards
+shards

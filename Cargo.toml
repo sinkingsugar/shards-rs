@@ -1,0 +1,140 @@
+[package]
+name = "shards-embed"
+version = "0.1.0"
+edition = "2021"
+description = "Shards programming language - embeddable runtime"
+license = "MPL-2.0"
+links = "shards-cpp"
+
+[lib]
+crate-type = ["rlib"]
+
+[[bin]]
+name = "shards"
+path = "src/bin/shards.rs"
+required-features = ["cli"]
+
+[features]
+default = ["cli", "gfx", "egui", "core", "fs", "network", "langffi"]
+cli = []
+full = [
+    "gfx", "egui", "ml", "core", "crypto", "csv", "fs",
+    "http", "network", "pdf", "ssh", "svg", "random",
+    "markdown", "localshell", "langffi", "py"
+]
+
+# Individual modules - enable corresponding dependencies
+gfx = ["dep:gfx"]
+egui = ["dep:shards-egui-register", "dep:shards-inputs-debug-ui"]
+ml = ["dep:shards-ml"]
+core = ["dep:shards-core"]
+crypto = ["dep:shards-crypto"]
+csv = ["dep:shards-csv"]
+fs = ["dep:shards-fs"]
+http = ["dep:shards-http"]
+network = ["dep:shards-network"]
+pdf = ["dep:shards-pdf"]
+ssh = ["dep:shards-ssh"]
+svg = ["dep:shards-svg"]
+random = ["dep:shards-random"]
+markdown = ["dep:shards-markdown"]
+localshell = ["dep:shards-localshell"]
+langffi = ["dep:shards-langffi"]
+py = ["dep:shards-py"]
+
+# Profiling
+tracy = ["tracy-client"]
+
+[dependencies]
+# Base shards crate
+shards = { path = "shards/shards/rust" }
+
+# Graphics
+gfx = { path = "shards/shards/gfx/rust/gfx", optional = true }
+
+# UI
+shards-egui-register = { path = "shards/shards/modules/egui", optional = true }
+shards-inputs-debug-ui = { path = "shards/shards/modules/egui/debug_ui", optional = true }
+
+# ML
+shards-ml = { path = "shards/shards/modules/candle", features = ["metal", "accelerate"], optional = true }
+
+# Core modules
+shards-core = { path = "shards/shards/modules/core", features = ["default"], optional = true }
+shards-crypto = { path = "shards/shards/modules/crypto", optional = true }
+shards-csv = { path = "shards/shards/modules/csv", optional = true }
+shards-fileops = { path = "shards/shards/modules/fileops" }
+shards-fs = { path = "shards/shards/modules/fs", features = ["rfd-enabled", "rfd-xdg"], optional = true }
+shards-http = { path = "shards/shards/modules/http", optional = true }
+shards-langffi = { path = "shards/shards/modules/langffi", optional = true }
+shards-localshell = { path = "shards/shards/modules/localshell", optional = true }
+shards-markdown = { path = "shards/shards/modules/markdown", optional = true }
+shards-network = { path = "shards/shards/modules/network", optional = true }
+shards-pdf = { path = "shards/shards/modules/pdf", optional = true }
+shards-py = { path = "shards/shards/modules/py", optional = true }
+shards-random = { path = "shards/shards/modules/random", optional = true }
+shards-ssh = { path = "shards/shards/modules/ssh", optional = true }
+shards-svg = { path = "shards/shards/modules/svg", optional = true }
+
+# Language
+shards-lang = { path = "shards/shards/lang" }
+
+# SQLite
+crsql_bundle = { path = "shards/deps/sqlite/cr-sqlite/core/rs/bundle", features = ["static"] }
+
+# Tracy (optional)
+tracy-client = { version = "0.17.4", optional = true }
+
+[build-dependencies]
+cmake = "0.1"
+
+[patch.crates-io]
+chrono = { git = "https://github.com/shards-lang/chrono", rev = "5aaf74235778120b5984b46ced47478c1431d9a0" }
+tar = { git = "https://github.com/shards-lang/tar-rs", rev = "6d26c0d1724326c8c1b06eaafc25a19253afbcdc" }
+libc = { git = "https://github.com/shards-lang/libc.git", version = "=0.2.155", rev = "406373322b93012c21b6567ac5e4b2abd379ae2a" }
+mio = { git = "https://github.com/shards-lang/mio.git", version = "=0.8.11", rev = "65e4240c7c8dc6dde2ccf3617d4830fed9e670b6" }
+getrandom = { git = "https://github.com/shards-lang/getrandom.git", version = "=0.2.15", rev = "5edb0453b3ab46e352c7f3463f192b4959770c2e" }
+socket2 = { git = "https://github.com/shards-lang/socket2.git", version = "=0.5.7", rev = "17a4d72eb2f3b2311bc724cfb4a43a28cc6c70de" }
+security-framework = { git = "https://github.com/shards-lang/rust-security-framework.git", version = "=2.11.0", rev = "ea683f291bb8dff51d3239e556c3236e09274c16" }
+sysctl = { git = "https://github.com/shards-lang/sysctl-rs.git", version = "=0.5.5", rev = "859c91707dfaa11d8adff35b65b1b88bb98680bd" }
+ring = { git = "https://github.com/shards-lang/ring.git", version = "=0.17.8", rev = "0a00284cd6de51d78bd687a93352369a3f4374be" }
+onig_sys = { git = "https://github.com/shards-lang/rust-onig.git", version = "=69.8.1", rev = "c4378abcbf30d58cf5f230c0d2e6375f2be05a47" }
+nix = { git = "https://github.com/fragcolor-xyz/nix.git", version = "=0.30.1", rev = "268c07f13fa64e1d493c883c5c860f08fbcbd9b3" }
+memmap2 = { git = "https://github.com/sinkingsugar/memmap2-rs.git", version = "=0.9.8", rev = "d0cbc3362908617fd6adcac8d84dddbbee91d4c0" }
+
+# Graphics patches
+objc = { git = "https://github.com/shards-lang/rust-objc.git", version = "=0.2.7", branch = "shards-0.2.7" }
+metal = { git = "https://github.com/shards-lang/metal-rs.git", version = "=0.29.0", branch = "shards-0.29.0" }
+
+tracy-client = { git = "https://github.com/nagisa/rust_tracy_client", tag = "tracy-client-v0.15.0" }
+
+[profile.dev.package]
+tiny-skia = { opt-level = 3 }
+resvg = { opt-level = 3 }
+usvg = { opt-level = 3 }
+shards-lang = { opt-level = 3 }
+shards-langffi = { opt-level = 3 }
+pest = { opt-level = 3, debug-assertions = false }
+pest_derive = { opt-level = 3, debug-assertions = false }
+syntect = { opt-level = 3 }
+flate2 = { opt-level = 3 }
+bincode = { opt-level = 3 }
+flexbuffers = { opt-level = 3 }
+bitcode = { opt-level = 3 }
+tokenizers = { opt-level = 3 }
+candle-core = { opt-level = 3 }
+candle-transformers = { opt-level = 3 }
+candle-nn = { opt-level = 3 }
+
+[profile.dev.package."wgpu-hal"]
+debug-assertions = false
+opt-level = 3
+[profile.dev.package."wgpu-core"]
+debug-assertions = false
+opt-level = 3
+[profile.dev.package."wgpu-types"]
+debug-assertions = false
+opt-level = 3
+[profile.dev.package."wgpu-native"]
+opt-level = 3
+debug-assertions = false
