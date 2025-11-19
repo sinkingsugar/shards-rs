@@ -1,9 +1,17 @@
 use cmake::Config;
 use std::env;
+use std::path::Path;
+use std::process::Command;
+
+const SHARDS_REPO: &str = "https://github.com/fragcolor-xyz/shards.git";
+const SHARDS_REF: &str = "devel"; // Main branch, or use a tag like "v0.5.0"
 
 fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let profile = env::var("PROFILE").unwrap();
+
+    // Ensure shards source is available
+    ensure_shards_source();
 
     let mut config = Config::new("shards");
 
@@ -206,4 +214,108 @@ fn main() {
     // Re-run if shards source changes
     println!("cargo:rerun-if-changed=shards/shards/core");
     println!("cargo:rerun-if-changed=shards/CMakeLists.txt");
+}
+
+fn ensure_shards_source() {
+    let shards_dir = Path::new("shards");
+
+    // Skip if already exists (symlink or cloned)
+    if shards_dir.exists() {
+        return;
+    }
+
+    println!("cargo:warning=Cloning shards repository (this may take a moment)...");
+
+    // Shallow clone
+    let status = Command::new("git")
+        .args([
+            "clone",
+            "--depth", "1",
+            "--branch", SHARDS_REF,
+            SHARDS_REPO,
+            "shards",
+        ])
+        .status()
+        .expect("Failed to execute git clone. Is git installed?");
+
+    if !status.success() {
+        panic!("Failed to clone shards repository");
+    }
+
+    // Initialize submodules based on features
+    let mut submodules = vec![
+        // Core dependencies (always needed)
+        "deps/stb",
+        "deps/json",
+        "deps/magic_enum",
+        "deps/cpp-taskflow",
+        "deps/nameof",
+        "deps/pdqsort",
+        "deps/filesystem",
+        "deps/xxHash",
+        "deps/linalg",
+        "deps/spdlog",
+        "deps/brotli",
+        "deps/tracy",
+        "deps/oneTBB",
+        "deps/crdt-lite",
+        "deps/utf8.h",
+        "deps/entt",
+    ];
+
+    // Network
+    if cfg!(feature = "network") {
+        submodules.push("deps/kcp");
+    }
+
+    // GFX
+    if cfg!(feature = "gfx") {
+        submodules.extend([
+            "deps/SDL3",
+            "deps/tinygltf",
+            "deps/draco",
+            "shards/gfx/rust/wgpu-native",
+            "shards/gfx/rust/wgpu",
+            "shards/gfx/rust/profiling",
+        ]);
+    }
+
+    // SQLite (used by core)
+    submodules.extend([
+        "deps/sqlite/cr-sqlite",
+        "deps/sqlite/sqlite-vec",
+    ]);
+
+    // ML/LLM
+    if cfg!(feature = "ml") {
+        submodules.extend([
+            "deps/llama.cpp",
+            "deps/whisper.cpp",
+        ]);
+    }
+
+    // Audio
+    submodules.extend([
+        "deps/miniaudio",
+        "deps/kissfft",
+    ]);
+
+    // Snappy compression
+    submodules.push("deps/snappy");
+
+    println!("cargo:warning=Initializing {} submodules...", submodules.len());
+
+    // Initialize submodules with depth 1
+    let status = Command::new("git")
+        .current_dir(shards_dir)
+        .args(["submodule", "update", "--init", "--depth", "1"])
+        .args(&submodules)
+        .status()
+        .expect("Failed to initialize submodules");
+
+    if !status.success() {
+        panic!("Failed to initialize shards submodules");
+    }
+
+    println!("cargo:warning=Shards source ready");
 }
