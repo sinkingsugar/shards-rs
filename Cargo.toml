@@ -3,7 +3,7 @@ name = "shards-embed"
 version = "0.1.0"
 edition = "2021"
 description = "Shards programming language - embeddable runtime"
-license = "MPL-2.0"
+license = "BSD-3-Clause"
 links = "shards-cpp"
 
 [lib]
