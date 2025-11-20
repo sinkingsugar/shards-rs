@@ -85,7 +85,7 @@ tracy-client = { version = "0.17.4", optional = true }
 # Linux-specific: rfd with xdg-portal needs async runtime
 [target.'cfg(target_os = "linux")'.dependencies]
 zbus = { version = "4", default-features = true }
-async-std = "1"
+rfd = { git = "https://github.com/shards-lang/rfd.git", branch = "shards-objc2", features = ["async-std"] }
 
 [build-dependencies]
 cmake = "0.1"
