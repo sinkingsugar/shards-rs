@@ -12,11 +12,9 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    if: |
+      github.event.pull_request.user.login == 'sinkingsugar' &&
+      contains(github.event.pull_request.labels.*.name, 'claude-review')
 
     runs-on: ubuntu-latest
     permissions:
@@ -48,6 +46,9 @@ jobs:
             - Test coverage
 
             Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
+
+            Avoid suggesting to document limitations, things should be fixed and complete before merge.
+            Avoid caring about backward compatibility too much, consider this software is pre-release.
 
             Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
 
