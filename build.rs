@@ -298,9 +298,12 @@ fn main() {
             println!("cargo:rustc-link-lib=framework=SystemConfiguration");
         }
 
+        // Common to all (needed by SDL3)
+        println!("cargo:rustc-link-lib=framework=AVFoundation");
+        println!("cargo:rustc-link-lib=framework=CoreMedia");
+
         // iOS/visionOS/watchOS
         if is_mobile {
-            println!("cargo:rustc-link-lib=framework=AVFoundation");
             println!("cargo:rustc-link-lib=framework=CoreGraphics");
             println!("cargo:rustc-link-lib=framework=UIKit");
             println!("cargo:rustc-link-lib=framework=CoreMotion");
@@ -310,7 +313,6 @@ fn main() {
             println!("cargo:rustc-link-lib=framework=Carbon");
             println!("cargo:rustc-link-lib=framework=ForceFeedback");
             println!("cargo:rustc-link-lib=framework=CoreServices");
-            println!("cargo:rustc-link-lib=framework=CoreMedia");
         }
 
         // Swift runtime
