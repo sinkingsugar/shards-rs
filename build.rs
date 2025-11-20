@@ -242,7 +242,6 @@ fn main() {
         build_dir: &std::path::Path,
         lib_patterns: &[&str],
         lib_name: &str,
-        target_os: &str,
     ) -> bool {
         let mut found = false;
 
@@ -289,8 +288,8 @@ fn main() {
     }
 
     // TBB puts libraries in compiler-specific directories
-    let tbb_patterns = vec!["libtbb.a", "libtbb_debug.a", "tbb.lib", "tbb_debug.lib", "tbb12.lib"];
-    find_and_add_lib_dir(&build_dir, &tbb_patterns, "TBB", &target_os);
+    let tbb_patterns = vec!["libtbb.a", "libtbb_debug.a", "tbb.lib", "tbb_debug.lib", "tbb12.lib", "tbb12_debug.lib"];
+    find_and_add_lib_dir(&build_dir, &tbb_patterns, "TBB");
 
     // External dependencies in nested build directories
     if cfg!(feature = "audio") {
@@ -357,7 +356,11 @@ fn main() {
     }
     // TBB has different naming on Windows (tbb12 vs tbb)
     if target_os == "windows" {
-        println!("cargo:rustc-link-lib=static=tbb12");
+        if profile == "release" {
+            println!("cargo:rustc-link-lib=static=tbb12");
+        } else {
+            println!("cargo:rustc-link-lib=static=tbb12_debug");
+        }
     } else if profile == "release" {
         println!("cargo:rustc-link-lib=static=tbb");
     } else {
