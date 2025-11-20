@@ -14,11 +14,9 @@ The crate supports modular feature flags to control which Shards modules are com
 
 ### Default Features
 - `cli` - Command-line interface (`shards` binary)
-- `core` - Core language features
-- `langffi` - Foreign function interface
+- `core`, `langffi` - Core language features
 - `fs` - File system operations
-- `random` - Random number generation
-- `assert`, `bigint`, `channels`, `json`, `reflection`, `struct` - Core modules
+- `random`, `assert`, `bigint`, `channels`, `json`, `reflection`, `struct` - Core modules
 
 ### Optional Features
 - `ml` - Machine learning

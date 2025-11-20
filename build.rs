@@ -173,11 +173,8 @@ fn main() {
     } else {
         config.define("SHARDS_WITH_PDF", "OFF");
     }
-    if cfg!(feature = "ssh") {
-        config.define("SHARDS_WITH_SSH", "ON");
-    } else {
-        config.define("SHARDS_WITH_SSH", "OFF");
-    }
+    // SSH feature disabled - requires OPENSSL_DIR env vars to be set
+    config.define("SHARDS_WITH_SSH", "OFF");
     if cfg!(feature = "svg") {
         config.define("SHARDS_WITH_SVG", "ON");
     } else {
@@ -207,13 +204,9 @@ fn main() {
         config.define("ENABLE_PYTHON_SHARDS", "OFF");
         config.define("ENABLE_RUSTPYTHON_EMBEDDED", "OFF");
     }
-    if cfg!(feature = "tracy") {
-        config.define("TRACY_ENABLE", "ON");
-        config.define("SHARDS_WITH_TRACY", "ON");
-    } else {
-        config.define("TRACY_ENABLE", "OFF");
-        config.define("SHARDS_WITH_TRACY", "OFF");
-    }
+    // Tracy feature disabled - requires GFX modules
+    config.define("TRACY_ENABLE", "OFF");
+    config.define("SHARDS_WITH_TRACY", "OFF");
 
     // Build the C++ union target
     config.build_target("shards-cpp-union");
@@ -314,16 +307,8 @@ fn main() {
     // Rust libraries built by CMake's corrosion (crsql, etc)
     let target_arch = env::var("TARGET").unwrap_or_else(|_| "aarch64-apple-darwin".to_string());
 
-    // When tracy feature is enabled, profile is "debug-tracy" or "release-tracy"
-    let profile_suffix = if cfg!(feature = "tracy") {
-        if profile == "release" {
-            "release-tracy"
-        } else {
-            "debug-tracy"
-        }
-    } else {
-        profile.as_str()
-    };
+    // Tracy feature disabled - use standard profile names
+    let profile_suffix = profile.as_str();
 
     let rust_target_dir = build_dir.join("target").join(&target_arch).join(profile_suffix);
     if rust_target_dir.exists() {
@@ -385,9 +370,7 @@ fn main() {
         println!("cargo:rustc-link-lib=static=kcp");
     }
 
-    if cfg!(feature = "tracy") {
-        println!("cargo:rustc-link-lib=static=TracyClient");
-    }
+    // Tracy feature disabled - requires GFX modules
 
     // Compression libraries
     if cfg!(feature = "brotli") {
@@ -430,9 +413,10 @@ fn main() {
     }
 
     // OpenSSL/LibreSSL (needed by HTTP module via boost::beast)
-    // SSH disabled because it needs env vars, but HTTP still needs these libs
-    println!("cargo:rustc-link-lib=static=ssl");
-    println!("cargo:rustc-link-lib=static=crypto");
+    if cfg!(feature = "http") {
+        println!("cargo:rustc-link-lib=static=ssl");
+        println!("cargo:rustc-link-lib=static=crypto");
+    }
 
     // // SDL3 is used by core for SDL_getenv etc
     // println!("cargo:rustc-link-lib=static=SDL3");

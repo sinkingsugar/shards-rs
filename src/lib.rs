@@ -55,8 +55,9 @@ pub use shards_network;
 #[cfg(feature = "pdf")]
 pub use shards_pdf;
 
-#[cfg(feature = "ssh")]
-pub use shards_ssh;
+// SSH feature disabled - requires OPENSSL_DIR env vars to be set
+// #[cfg(feature = "ssh")]
+// pub use shards_ssh;
 
 #[cfg(feature = "svg")]
 pub use shards_svg;

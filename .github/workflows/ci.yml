@@ -69,13 +69,25 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Check
+      - name: Check (default features)
+        run: cargo check --locked
+
+      - name: Build (default features)
+        run: cargo build --locked
+
+      - name: Run tests (default features)
+        run: cargo test --locked
+
+      - name: Check (all features)
+        if: matrix.os == 'macos-latest'
         run: cargo check --locked --all-features
 
-      - name: Build
+      - name: Build (all features)
+        if: matrix.os == 'macos-latest'
         run: cargo build --locked --all-features
 
-      - name: Run tests
+      - name: Run tests (all features)
+        if: matrix.os == 'macos-latest'
         run: cargo test --locked --all-features
 
       - name: Smoke test

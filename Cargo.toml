@@ -147,25 +147,9 @@ shards-lang = { opt-level = 3 }
 shards-langffi = { opt-level = 3 }
 pest = { opt-level = 3, debug-assertions = false }
 pest_derive = { opt-level = 3, debug-assertions = false }
-syntect = { opt-level = 3 }
 flate2 = { opt-level = 3 }
-bincode = { opt-level = 3 }
 flexbuffers = { opt-level = 3 }
-bitcode = { opt-level = 3 }
 tokenizers = { opt-level = 3 }
 candle-core = { opt-level = 3 }
 candle-transformers = { opt-level = 3 }
 candle-nn = { opt-level = 3 }
-
-[profile.dev.package."wgpu-hal"]
-debug-assertions = false
-opt-level = 3
-[profile.dev.package."wgpu-core"]
-debug-assertions = false
-opt-level = 3
-[profile.dev.package."wgpu-types"]
-debug-assertions = false
-opt-level = 3
-[profile.dev.package."wgpu-native"]
-opt-level = 3
-debug-assertions = false
