@@ -55,9 +55,10 @@ jobs:
         run: |
           git config --system core.longpaths true
           choco install ninja cmake llvm
-          echo "C:\Program Files\LLVM\bin" >> $env:GITHUB_PATH
-          echo "CC=clang" >> $env:GITHUB_ENV
-          echo "CXX=clang++" >> $env:GITHUB_ENV
+          echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "CC=C:\Program Files\LLVM\bin\clang.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "CXX=C:\Program Files\LLVM\bin\clang++.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "ASM=C:\Program Files\LLVM\bin\clang.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Cache Cargo
         uses: actions/cache@v4
