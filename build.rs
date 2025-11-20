@@ -246,9 +246,15 @@ fn main() {
     // Third-party libraries
     if profile == "release" {
         println!("cargo:rustc-link-lib=static=spdlog");
-        println!("cargo:rustc-link-lib=static=tbb");
     } else {
         println!("cargo:rustc-link-lib=static=spdlogd");
+    }
+    // TBB has different naming on Windows (tbb12 vs tbb)
+    if target_os == "windows" {
+        println!("cargo:rustc-link-lib=static=tbb12");
+    } else if profile == "release" {
+        println!("cargo:rustc-link-lib=static=tbb");
+    } else {
         println!("cargo:rustc-link-lib=static=tbb_debug");
     }
     println!("cargo:rustc-link-lib=static=kcp");
@@ -272,8 +278,8 @@ fn main() {
     // Imaging
     println!("cargo:rustc-link-lib=static=jpeg");
 
-    // SDL3 is used by core for SDL_getenv etc
-    println!("cargo:rustc-link-lib=static=SDL3");
+    // // SDL3 is used by core for SDL_getenv etc
+    // println!("cargo:rustc-link-lib=static=SDL3");
 
     // Platform-specific dependencies
     if is_apple {
@@ -425,7 +431,7 @@ fn init_submodules(shards_dir: &Path) {
         "deps/utf8.h",
         "deps/entt",
         "deps/kcp",
-        "deps/SDL3",
+        // "deps/SDL3",
         "deps/tinygltf",
         "deps/draco",
         "deps/sqlite/cr-sqlite",
