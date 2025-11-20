@@ -474,6 +474,8 @@ fn main() {
         println!("cargo:rustc-link-lib=user32");
         println!("cargo:rustc-link-lib=shell32");
         println!("cargo:rustc-link-lib=ole32");
+        // Provides legacy POSIX functions like strdup
+        println!("cargo:rustc-link-lib=legacy_stdio_definitions");
     }
 
     // Re-run if shards source changes
