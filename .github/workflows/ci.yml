@@ -48,7 +48,7 @@ jobs:
             libasound2-dev \
             libpulse-dev \
             libwayland-dev \
-            libbacktrace-dev
+            binutils-dev
 
       - name: Install dependencies (Windows)
         if: matrix.os == 'windows-latest'
