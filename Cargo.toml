@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2021"
 description = "Shards programming language - embeddable runtime"
 license = "BSD-3-Clause"
+repository = "https://github.com/sinkingsugar/shards-rs"
+homepage = "https://github.com/fragcolor-xyz/shards"
+readme = "README.md"
+keywords = ["shards", "programming-language", "visual-programming", "embedded", "runtime"]
+categories = ["embedded", "development-tools"]
 links = "shards-cpp"
 
 [lib]
