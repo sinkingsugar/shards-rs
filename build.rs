@@ -5,7 +5,9 @@ use std::process::Command;
 
 fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap_or_default();
     let profile = env::var("PROFILE").unwrap();
+    let is_apple = target_vendor == "apple";
 
     // Find shards source - either local or Cargo-cached
     let shards_dir = find_shards_source();
@@ -227,8 +229,8 @@ fn main() {
     println!("cargo:rustc-link-lib=static=boost_chrono");
     println!("cargo:rustc-link-lib=static=boost_date_time");
     println!("cargo:rustc-link-lib=static=boost_random");
-    // boost_stacktrace_basic is macOS-only
-    if target_os == "macos" || target_os == "ios" {
+    // boost_stacktrace_basic is Apple-only
+    if is_apple {
         println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
     }
 
@@ -265,50 +267,45 @@ fn main() {
     println!("cargo:rustc-link-lib=static=SDL3");
 
     // Platform-specific dependencies
-    match target_os.as_str() {
-        "macos" | "ios" => {
-            // Swift implementation for core (shards_openURL etc)
-            println!("cargo:rustc-link-lib=static=shards-core-swift-impl");
+    if is_apple {
+        // Swift implementation for core (shards_openURL etc)
+        println!("cargo:rustc-link-lib=static=shards-core-swift-impl");
 
-            println!("cargo:rustc-link-lib=c++");
-            println!("cargo:rustc-link-lib=framework=Foundation");
-            println!("cargo:rustc-link-lib=framework=CoreFoundation");
-            println!("cargo:rustc-link-lib=framework=Security");
-            println!("cargo:rustc-link-lib=framework=IOKit");
-            println!("cargo:rustc-link-lib=framework=CoreServices");
+        println!("cargo:rustc-link-lib=c++");
+        println!("cargo:rustc-link-lib=framework=Foundation");
+        println!("cargo:rustc-link-lib=framework=CoreFoundation");
+        println!("cargo:rustc-link-lib=framework=Security");
+        println!("cargo:rustc-link-lib=framework=IOKit");
+        println!("cargo:rustc-link-lib=framework=CoreServices");
 
-            // SDL3 frameworks
-            println!("cargo:rustc-link-lib=framework=Metal");
-            println!("cargo:rustc-link-lib=framework=MetalKit");
-            println!("cargo:rustc-link-lib=framework=QuartzCore");
-            println!("cargo:rustc-link-lib=framework=Cocoa");
-            println!("cargo:rustc-link-lib=framework=Carbon");
-            println!("cargo:rustc-link-lib=framework=ForceFeedback");
-            println!("cargo:rustc-link-lib=framework=GameController");
-            println!("cargo:rustc-link-lib=framework=CoreHaptics");
-            println!("cargo:rustc-link-lib=framework=AVFoundation");
-            println!("cargo:rustc-link-lib=framework=CoreMedia");
-            println!("cargo:rustc-link-lib=framework=CoreVideo");
-            println!("cargo:rustc-link-lib=framework=CoreAudio");
-            println!("cargo:rustc-link-lib=framework=AudioToolbox");
+        // SDL3 frameworks
+        println!("cargo:rustc-link-lib=framework=Metal");
+        println!("cargo:rustc-link-lib=framework=MetalKit");
+        println!("cargo:rustc-link-lib=framework=QuartzCore");
+        println!("cargo:rustc-link-lib=framework=Cocoa");
+        println!("cargo:rustc-link-lib=framework=Carbon");
+        println!("cargo:rustc-link-lib=framework=ForceFeedback");
+        println!("cargo:rustc-link-lib=framework=GameController");
+        println!("cargo:rustc-link-lib=framework=CoreHaptics");
+        println!("cargo:rustc-link-lib=framework=AVFoundation");
+        println!("cargo:rustc-link-lib=framework=CoreMedia");
+        println!("cargo:rustc-link-lib=framework=CoreVideo");
+        println!("cargo:rustc-link-lib=framework=CoreAudio");
+        println!("cargo:rustc-link-lib=framework=AudioToolbox");
 
-            // Swift runtime
-            println!("cargo:rustc-link-arg=-Xlinker");
-            println!("cargo:rustc-link-arg=-rpath");
-            println!("cargo:rustc-link-arg=-Xlinker");
-            println!("cargo:rustc-link-arg=/usr/lib/swift");
-        }
-        "linux" => {
-            println!("cargo:rustc-link-lib=stdc++");
-            println!("cargo:rustc-link-lib=pthread");
-            println!("cargo:rustc-link-lib=dl");
-        }
-        "windows" => {
-            println!("cargo:rustc-link-lib=user32");
-            println!("cargo:rustc-link-lib=shell32");
-            println!("cargo:rustc-link-lib=ole32");
-        }
-        _ => {}
+        // Swift runtime
+        println!("cargo:rustc-link-arg=-Xlinker");
+        println!("cargo:rustc-link-arg=-rpath");
+        println!("cargo:rustc-link-arg=-Xlinker");
+        println!("cargo:rustc-link-arg=/usr/lib/swift");
+    } else if target_os == "linux" {
+        println!("cargo:rustc-link-lib=stdc++");
+        println!("cargo:rustc-link-lib=pthread");
+        println!("cargo:rustc-link-lib=dl");
+    } else if target_os == "windows" {
+        println!("cargo:rustc-link-lib=user32");
+        println!("cargo:rustc-link-lib=shell32");
+        println!("cargo:rustc-link-lib=ole32");
     }
 
     // Re-run if shards source changes
