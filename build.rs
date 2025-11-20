@@ -3,9 +3,6 @@ use std::env;
 use std::path::Path;
 use std::process::Command;
 
-const SHARDS_REPO: &str = "https://github.com/fragcolor-xyz/shards.git";
-const SHARDS_REF: &str = "devel"; // Main branch, or use a tag like "v0.5.0"
-
 fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let profile = env::var("PROFILE").unwrap();
@@ -53,68 +50,99 @@ fn main() {
     config.define("SHARDS_WITH_SQLITE", "ON");
     config.define("SHARDS_WITH_STRUCT", "ON");
 
-    // Disabled modules
+    // Disabled modules (no feature flags for these)
     config.define("SHARDS_WITH_CLIPBOARD", "OFF");
     config.define("SHARDS_WITH_DEBUGGER", "OFF");
     config.define("SHARDS_WITH_DESKTOP", "OFF");
-    config.define("SHARDS_WITH_GENETIC", "OFF");
     config.define("SHARDS_WITH_GFX", "OFF");
     config.define("SHARDS_WITH_INPUTS", "OFF");
     config.define("SHARDS_WITH_PHYSICS", "OFF");
-    config.define("SHARDS_WITH_TUI", "OFF");
     config.define("SHARDS_WITH_WASM", "OFF");
     config.define("SHARDS_WITH_EGUI", "OFF");
-    config.define("SHARDS_WITH_TRACY", "OFF");
 
     // Feature-gated modules
     if cfg!(feature = "ml") {
         config.define("SHARDS_WITH_ML", "ON");
         config.define("SHARDS_WITH_LLM", "ON");
+    } else {
+        config.define("SHARDS_WITH_ML", "OFF");
+        config.define("SHARDS_WITH_LLM", "OFF");
     }
     if cfg!(feature = "crypto") {
         config.define("SHARDS_WITH_CRYPTO", "ON");
+    } else {
+        config.define("SHARDS_WITH_CRYPTO", "OFF");
     }
     if cfg!(feature = "csv") {
         config.define("SHARDS_WITH_CSV", "ON");
+    } else {
+        config.define("SHARDS_WITH_CSV", "OFF");
     }
     if cfg!(feature = "fs") {
         config.define("SHARDS_WITH_FS", "ON");
+    } else {
+        config.define("SHARDS_WITH_FS", "OFF");
     }
     if cfg!(feature = "http") {
         config.define("SHARDS_WITH_HTTP", "ON");
+    } else {
+        config.define("SHARDS_WITH_HTTP", "OFF");
     }
     if cfg!(feature = "network") {
         config.define("SHARDS_WITH_NETWORK", "ON");
+    } else {
+        config.define("SHARDS_WITH_NETWORK", "OFF");
     }
     if cfg!(feature = "pdf") {
         config.define("SHARDS_WITH_PDF", "ON");
+    } else {
+        config.define("SHARDS_WITH_PDF", "OFF");
     }
     if cfg!(feature = "ssh") {
         config.define("SHARDS_WITH_SSH", "ON");
+    } else {
+        config.define("SHARDS_WITH_SSH", "OFF");
     }
     if cfg!(feature = "svg") {
         config.define("SHARDS_WITH_SVG", "ON");
+    } else {
+        config.define("SHARDS_WITH_SVG", "OFF");
     }
     if cfg!(feature = "random") {
         config.define("SHARDS_WITH_RANDOM", "ON");
+    } else {
+        config.define("SHARDS_WITH_RANDOM", "OFF");
     }
     if cfg!(feature = "markdown") {
         config.define("SHARDS_WITH_MARKDOWN", "ON");
+    } else {
+        config.define("SHARDS_WITH_MARKDOWN", "OFF");
     }
     if cfg!(feature = "localshell") {
         config.define("SHARDS_WITH_LOCALSHELL", "ON");
+    } else {
+        config.define("SHARDS_WITH_LOCALSHELL", "OFF");
     }
     if cfg!(feature = "langffi") {
         config.define("SHARDS_WITH_LANGFFI", "ON");
+    } else {
+        config.define("SHARDS_WITH_LANGFFI", "OFF");
     }
     if cfg!(feature = "py") {
         config.define("SHARDS_WITH_PY", "ON");
         config.define("ENABLE_PYTHON_SHARDS", "ON");
         config.define("ENABLE_RUSTPYTHON_EMBEDDED", "ON");
+    } else {
+        config.define("SHARDS_WITH_PY", "OFF");
+        config.define("ENABLE_PYTHON_SHARDS", "OFF");
+        config.define("ENABLE_RUSTPYTHON_EMBEDDED", "OFF");
     }
     if cfg!(feature = "tracy") {
         config.define("TRACY_ENABLE", "ON");
         config.define("SHARDS_WITH_TRACY", "ON");
+    } else {
+        config.define("TRACY_ENABLE", "OFF");
+        config.define("SHARDS_WITH_TRACY", "OFF");
     }
 
     // Build the C++ union target
@@ -142,14 +170,22 @@ fn main() {
     println!("cargo:rustc-link-search=native={}", build_dir.display());
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
 
-    // TBB is in a weird location
-    let tbb_dir = build_dir.join("appleclang_17.0_cxx17_64_debug");
-    if tbb_dir.exists() {
-        println!("cargo:rustc-link-search=native={}", tbb_dir.display());
-    }
-    let tbb_dir_release = build_dir.join("appleclang_17.0_cxx17_64_release");
-    if tbb_dir_release.exists() {
-        println!("cargo:rustc-link-search=native={}", tbb_dir_release.display());
+    // TBB puts libraries in compiler-specific directories
+    // Scan for directories that contain TBB library files
+    if let Ok(entries) = std::fs::read_dir(&build_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                // Check if this directory contains TBB libraries
+                let has_tbb = path.join("libtbb.a").exists()
+                    || path.join("libtbb_debug.a").exists()
+                    || path.join("tbb.lib").exists()
+                    || path.join("tbb_debug.lib").exists();
+                if has_tbb {
+                    println!("cargo:rustc-link-search=native={}", path.display());
+                }
+            }
+        }
     }
 
     // External dependencies in nested build directories
@@ -162,7 +198,7 @@ fn main() {
         println!("cargo:rustc-link-search=native={}", mozjpeg_dir.display());
     }
 
-    // Rust libraries built by corrosion (gfx, etc)
+    // Rust libraries built by CMake's corrosion (crsql, etc)
     let target_arch = env::var("TARGET").unwrap_or_else(|_| "aarch64-apple-darwin".to_string());
     let rust_target_dir = if profile == "release" {
         build_dir.join("target").join(&target_arch).join("release")
@@ -225,18 +261,12 @@ fn main() {
     // SDL3 is used by core for SDL_getenv etc
     println!("cargo:rustc-link-lib=static=SDL3");
 
-    // Swift implementation for core (shards_openURL etc)
-    println!("cargo:rustc-link-lib=static=shards-core-swift-impl");
-
-    // GFX libraries
-    if cfg!(feature = "gfx") {
-        println!("cargo:rustc-link-lib=static=gfx");
-        println!("cargo:rustc-link-lib=static=gfx-swift");
-    }
-
     // Platform-specific dependencies
     match target_os.as_str() {
         "macos" | "ios" => {
+            // Swift implementation for core (shards_openURL etc)
+            println!("cargo:rustc-link-lib=static=shards-core-swift-impl");
+
             println!("cargo:rustc-link-lib=c++");
             println!("cargo:rustc-link-lib=framework=Foundation");
             println!("cargo:rustc-link-lib=framework=CoreFoundation");
@@ -244,7 +274,7 @@ fn main() {
             println!("cargo:rustc-link-lib=framework=IOKit");
             println!("cargo:rustc-link-lib=framework=CoreServices");
 
-            // SDL3 needs these frameworks
+            // SDL3 frameworks
             println!("cargo:rustc-link-lib=framework=Metal");
             println!("cargo:rustc-link-lib=framework=MetalKit");
             println!("cargo:rustc-link-lib=framework=QuartzCore");
@@ -369,9 +399,6 @@ fn init_submodules(shards_dir: &Path) {
         "deps/miniaudio",
         "deps/kissfft",
         "deps/snappy",
-        "shards/gfx/rust/wgpu-native",
-        "shards/gfx/rust/wgpu",
-        "shards/gfx/rust/profiling",
     ];
 
     let status = Command::new("git")
