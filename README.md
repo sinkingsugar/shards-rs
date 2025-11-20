@@ -1,10 +1,12 @@
 # shards-embed
 
-Rust bindings for the [Shards](https://github.com/fragcolor-xyz/shards) programming language runtime.
+A Rust crate for embedding the [Shards](https://github.com/fragcolor-xyz/shards) programming language runtime.
 
 ## Overview
 
-`shards-embed` provides safe Rust bindings to embed the Shards programming language in your Rust applications. Shards is a visual/textual programming language designed for interactive applications, game development, and creative coding.
+`shards-embed` provides an easy way for Rust projects to consume and embed Shards. The main Shards repository is a complex mix of C++ and Rust, making direct integration challenging. This crate simplifies that by providing a clean Cargo-based interface with the C++ core built transparently via CMake.
+
+Shards is a visual/textual programming language designed for interactive applications, game development, and creative coding.
 
 ## Features
 
