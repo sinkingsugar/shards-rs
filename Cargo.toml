@@ -82,9 +82,10 @@ shards-svg = { git = "https://github.com/fragcolor-xyz/shards.git", branch = "de
 # Tracy (optional)
 tracy-client = { version = "0.17.4", optional = true }
 
-# Linux-specific: zbus needs async runtime for rfd file dialogs
+# Linux-specific: rfd with xdg-portal needs async runtime
 [target.'cfg(target_os = "linux")'.dependencies]
 zbus = { version = "4", default-features = true }
+async-std = "1"
 
 [build-dependencies]
 cmake = "0.1"
