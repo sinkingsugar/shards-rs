@@ -233,7 +233,12 @@ fn main() {
     if is_apple {
         println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
     } else if target_os == "windows" {
-        println!("cargo:rustc-link-lib=static=boost_stacktrace_windbg");
+        // Windows uses windbg for debug, basic for release
+        if profile == "release" {
+            println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
+        } else {
+            println!("cargo:rustc-link-lib=static=boost_stacktrace_windbg");
+        }
     } else {
         println!("cargo:rustc-link-lib=static=boost_stacktrace_addr2line");
     }
