@@ -474,6 +474,11 @@ fn main() {
         println!("cargo:rustc-link-lib=user32");
         println!("cargo:rustc-link-lib=shell32");
         println!("cargo:rustc-link-lib=ole32");
+        println!("cargo:rustc-link-lib=ws2_32");
+        println!("cargo:rustc-link-lib=mswsock");
+        println!("cargo:rustc-link-lib=Secur32");
+        println!("cargo:rustc-link-lib=Crypt32");
+        println!("cargo:rustc-link-lib=NCrypt");
         // Provides legacy POSIX functions like strdup
         println!("cargo:rustc-link-lib=legacy_stdio_definitions");
     }
