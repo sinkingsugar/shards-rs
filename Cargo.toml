@@ -24,11 +24,12 @@ default = ["cli", "core", "langffi", "fs", "random", "assert", "bigint", "channe
 cli = []
 full = [
     "ml", "core", "crypto", "csv", "fs",
-    "http", "network", "pdf", "ssh", "svg", "random",
+    "http", "network", "pdf", "svg", "random",
     "markdown", "localshell", "langffi", "py",
     "anim", "assert", "audio", "bigint", "brotli", "channels",
     "crdts", "debug", "fileops", "imaging", "json", "os",
     "reflection", "snappy", "sqlite", "struct"
+    # ssh excluded - requires OPENSSL_DIR env vars to be set before build
 ]
 
 # GFX/EGUI disabled - these crates have nested workspaces
@@ -63,7 +64,7 @@ fs = ["dep:shards-fs"]
 http = ["dep:shards-http"]
 network = ["dep:shards-network"]
 pdf = ["dep:shards-pdf"]
-ssh = ["dep:shards-ssh"]
+# ssh = ["dep:shards-ssh"]  # Disabled - requires OPENSSL_DIR env vars to be set
 svg = ["dep:shards-svg"]
 random = ["dep:shards-random"]
 markdown = ["dep:shards-markdown"]
@@ -71,8 +72,8 @@ localshell = ["dep:shards-localshell"]
 langffi = ["dep:shards-langffi"]
 py = ["dep:shards-py"]
 
-# Profiling
-tracy = ["tracy-client"]
+# Profiling - disabled (requires GFX)
+# tracy = ["tracy-client"]
 
 [dependencies]
 # All shards crates from git - workspace resolves them
@@ -104,7 +105,7 @@ shards-network = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c
 shards-pdf = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c3e9acb006de1b848780d8bc2a94908b63716662", optional = true }
 shards-py = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c3e9acb006de1b848780d8bc2a94908b63716662", optional = true }
 shards-random = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c3e9acb006de1b848780d8bc2a94908b63716662", optional = true }
-shards-ssh = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c3e9acb006de1b848780d8bc2a94908b63716662", optional = true }
+# shards-ssh = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c3e9acb006de1b848780d8bc2a94908b63716662", optional = true }
 shards-svg = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "c3e9acb006de1b848780d8bc2a94908b63716662", optional = true }
 
 # Tracy (optional)

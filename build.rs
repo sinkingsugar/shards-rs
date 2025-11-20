@@ -313,11 +313,19 @@ fn main() {
 
     // Rust libraries built by CMake's corrosion (crsql, etc)
     let target_arch = env::var("TARGET").unwrap_or_else(|_| "aarch64-apple-darwin".to_string());
-    let rust_target_dir = if profile == "release" {
-        build_dir.join("target").join(&target_arch).join("release")
+
+    // When tracy feature is enabled, profile is "debug-tracy" or "release-tracy"
+    let profile_suffix = if cfg!(feature = "tracy") {
+        if profile == "release" {
+            "release-tracy"
+        } else {
+            "debug-tracy"
+        }
     } else {
-        build_dir.join("target").join(&target_arch).join("debug")
+        profile.as_str()
     };
+
+    let rust_target_dir = build_dir.join("target").join(&target_arch).join(profile_suffix);
     if rust_target_dir.exists() {
         println!("cargo:rustc-link-search=native={}", rust_target_dir.display());
         println!("cargo:rustc-link-search=native={}", rust_target_dir.join("deps").display());
@@ -376,8 +384,10 @@ fn main() {
     if cfg!(feature = "network") {
         println!("cargo:rustc-link-lib=static=kcp");
     }
-    
-    // println!("cargo:rustc-link-lib=static=TracyClient");
+
+    if cfg!(feature = "tracy") {
+        println!("cargo:rustc-link-lib=static=TracyClient");
+    }
 
     // Compression libraries
     if cfg!(feature = "brotli") {
@@ -406,6 +416,23 @@ fn main() {
     if cfg!(feature = "imaging") {
         println!("cargo:rustc-link-lib=static=jpeg");
     }
+
+    // ML/LLM (llama.cpp and ggml)
+    if cfg!(feature = "ml") {
+        println!("cargo:rustc-link-lib=static=llama");
+        println!("cargo:rustc-link-lib=static=ggml");
+        println!("cargo:rustc-link-lib=static=ggml-base");
+        println!("cargo:rustc-link-lib=static=ggml-cpu");
+        println!("cargo:rustc-link-lib=static=ggml-blas");
+        if is_apple {
+            println!("cargo:rustc-link-lib=static=ggml-metal");
+        }
+    }
+
+    // OpenSSL/LibreSSL (needed by HTTP module via boost::beast)
+    // SSH disabled because it needs env vars, but HTTP still needs these libs
+    println!("cargo:rustc-link-lib=static=ssl");
+    println!("cargo:rustc-link-lib=static=crypto");
 
     // // SDL3 is used by core for SDL_getenv etc
     // println!("cargo:rustc-link-lib=static=SDL3");
@@ -464,6 +491,12 @@ fn main() {
         println!("cargo:rustc-link-arg=-rpath");
         println!("cargo:rustc-link-arg=-Xlinker");
         println!("cargo:rustc-link-arg=/usr/lib/swift");
+
+        // ___isPlatformVersionAtLeast is a weak symbol used by Metal
+        // Allow it to be undefined and resolved at runtime
+        if cfg!(feature = "ml") {
+            println!("cargo:rustc-link-arg=-Wl,-U,___isPlatformVersionAtLeast");
+        }
     } else if target_os == "linux" {
         println!("cargo:rustc-link-lib=stdc++");
         println!("cargo:rustc-link-lib=pthread");

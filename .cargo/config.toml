@@ -1,2 +1,5 @@
+# Configure libssh2-sys to use CMake-built libressl
 [env]
 CRSQLITE_COMMIT_SHA = "dev"
+OPENSSL_STATIC = "1"
+OPENSSL_DIR = { value = "", relative = true }

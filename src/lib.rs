@@ -150,7 +150,7 @@ pub fn run_file_with_args(path: &str, script_args: &[&str]) -> i32 {
 /// Evaluate shards code from a string.
 ///
 /// Returns 0 on success, non-zero on error.
-pub fn eval_string(code: &str) -> i32 {
+pub fn eval_string(_code: &str) -> i32 {
     init();
 
     // Use stdin-like evaluation
