@@ -20,6 +20,12 @@ fn main() {
     // We ARE the Rust union, so skip CMake's Rust build
     config.define("SHARDS_NO_RUST_UNION", "ON");
 
+    // On Windows, force release CRT (/MD) even in debug builds
+    // Rust always uses release CRT, so C++ code must match
+    if target_os == "windows" {
+        config.define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreadedDLL");
+    }
+
     // Set build type based on Cargo profile
     let cmake_build_type = if profile == "release" {
         "Release"
