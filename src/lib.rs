@@ -2,10 +2,10 @@
 //!
 //! # Example
 //!
-//! ```rust,no_run
+//! ```rust,ignore
 //! fn main() {
-//!     shards::init();
-//!     let result = shards::run_file("script.shs");
+//!     shards_embed::init();
+//!     let result = shards_embed::run_file("script.shs");
 //!     std::process::exit(result);
 //! }
 //! ```

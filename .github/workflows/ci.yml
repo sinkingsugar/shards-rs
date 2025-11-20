@@ -73,6 +73,11 @@ jobs:
       - name: Run tests
         run: cargo test --locked --verbose
 
+      - name: Smoke test
+        if: matrix.os != 'windows-latest'
+        run: |
+          echo '"Hello from CI" | Log' | ./target/debug/shards eval
+
   format:
     name: Format
     runs-on: ubuntu-latest
