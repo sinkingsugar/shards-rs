@@ -324,6 +324,8 @@ fn main() {
         println!("cargo:rustc-link-lib=stdc++");
         println!("cargo:rustc-link-lib=pthread");
         println!("cargo:rustc-link-lib=dl");
+        // For boost_stacktrace_basic
+        println!("cargo:rustc-link-lib=bfd");
     } else if target_os == "windows" {
         println!("cargo:rustc-link-lib=user32");
         println!("cargo:rustc-link-lib=shell32");
