@@ -272,30 +272,46 @@ fn main() {
         println!("cargo:rustc-link-lib=static=shards-core-swift-impl");
 
         println!("cargo:rustc-link-lib=c++");
+
+        // Common Apple frameworks
         println!("cargo:rustc-link-lib=framework=Foundation");
         println!("cargo:rustc-link-lib=framework=CoreFoundation");
         println!("cargo:rustc-link-lib=framework=Security");
-        println!("cargo:rustc-link-lib=framework=IOKit");
-        println!("cargo:rustc-link-lib=framework=CoreServices");
-
-        // Core frameworks
-        println!("cargo:rustc-link-lib=framework=Metal");
-        println!("cargo:rustc-link-lib=framework=MetalKit");
-        println!("cargo:rustc-link-lib=framework=MetalPerformanceShaders");
-        println!("cargo:rustc-link-lib=framework=QuartzCore");
-        println!("cargo:rustc-link-lib=framework=Cocoa");
-        println!("cargo:rustc-link-lib=framework=Carbon");
-        println!("cargo:rustc-link-lib=framework=ForceFeedback");
-        println!("cargo:rustc-link-lib=framework=GameController");
-        println!("cargo:rustc-link-lib=framework=CoreHaptics");
-        println!("cargo:rustc-link-lib=framework=AVFoundation");
-        println!("cargo:rustc-link-lib=framework=CoreMedia");
-        println!("cargo:rustc-link-lib=framework=CoreVideo");
         println!("cargo:rustc-link-lib=framework=CoreAudio");
-        println!("cargo:rustc-link-lib=framework=AudioToolbox");
+        println!("cargo:rustc-link-lib=framework=CoreVideo");
+        println!("cargo:rustc-link-lib=framework=QuartzCore");
         println!("cargo:rustc-link-lib=framework=Accelerate");
-        println!("cargo:rustc-link-lib=framework=SystemConfiguration");
         println!("cargo:rustc-link-lib=iconv");
+
+        let is_watchos = target_os == "watchos";
+        let is_mobile = target_os == "ios" || target_os == "visionos" || is_watchos;
+
+        // Not watchOS
+        if !is_watchos {
+            println!("cargo:rustc-link-lib=framework=AudioToolbox");
+            println!("cargo:rustc-link-lib=framework=IOKit");
+            println!("cargo:rustc-link-lib=framework=Metal");
+            println!("cargo:rustc-link-lib=framework=MetalKit");
+            println!("cargo:rustc-link-lib=framework=MetalPerformanceShaders");
+            println!("cargo:rustc-link-lib=framework=CoreHaptics");
+            println!("cargo:rustc-link-lib=framework=GameController");
+            println!("cargo:rustc-link-lib=framework=SystemConfiguration");
+        }
+
+        // iOS/visionOS/watchOS
+        if is_mobile {
+            println!("cargo:rustc-link-lib=framework=AVFoundation");
+            println!("cargo:rustc-link-lib=framework=CoreGraphics");
+            println!("cargo:rustc-link-lib=framework=UIKit");
+            println!("cargo:rustc-link-lib=framework=CoreMotion");
+        } else {
+            // macOS only
+            println!("cargo:rustc-link-lib=framework=Cocoa");
+            println!("cargo:rustc-link-lib=framework=Carbon");
+            println!("cargo:rustc-link-lib=framework=ForceFeedback");
+            println!("cargo:rustc-link-lib=framework=CoreServices");
+            println!("cargo:rustc-link-lib=framework=CoreMedia");
+        }
 
         // Swift runtime
         println!("cargo:rustc-link-arg=-Xlinker");
