@@ -172,23 +172,61 @@ fn main() {
     println!("cargo:rustc-link-search=native={}", build_dir.display());
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
 
-    // TBB puts libraries in compiler-specific directories
-    // Scan for directories that contain TBB library files
-    if let Ok(entries) = std::fs::read_dir(&build_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.is_dir() {
-                // Check if this directory contains TBB libraries
-                let has_tbb = path.join("libtbb.a").exists()
-                    || path.join("libtbb_debug.a").exists()
-                    || path.join("tbb.lib").exists()
-                    || path.join("tbb_debug.lib").exists();
-                if has_tbb {
-                    println!("cargo:rustc-link-search=native={}", path.display());
+    // Helper function to find libraries in subdirectories
+    // If not found, prints debug info on Windows
+    fn find_and_add_lib_dir(
+        build_dir: &std::path::Path,
+        lib_patterns: &[&str],
+        lib_name: &str,
+        target_os: &str,
+    ) -> bool {
+        let mut found = false;
+
+        if let Ok(entries) = std::fs::read_dir(build_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    // Check if this directory contains any of the library patterns
+                    let has_lib = lib_patterns.iter().any(|pattern| path.join(pattern).exists());
+                    if has_lib {
+                        println!("cargo:rustc-link-search=native={}", path.display());
+                        found = true;
+                    }
                 }
             }
         }
+
+        // If not found, print debug info
+        if !found {
+            println!("cargo:warning=Library '{}' not found, scanning build directory: {}", lib_name, build_dir.display());
+            if let Ok(entries) = std::fs::read_dir(build_dir) {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    if path.is_dir() {
+                        println!("cargo:warning=Checking directory: {}", path.display());
+                        if let Ok(lib_entries) = std::fs::read_dir(&path) {
+                            for lib_entry in lib_entries.flatten() {
+                                let lib_path = lib_entry.path();
+                                if let Some(ext) = lib_path.extension() {
+                                    if ext == "lib" || ext == "a" || ext == "so" || ext == "dylib" {
+                                        if let Some(name) = lib_path.file_name() {
+                                            println!("cargo:warning=  Found library: {}", name.to_string_lossy());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        found
     }
+
+    // TBB puts libraries in compiler-specific directories
+    let tbb_patterns = vec!["libtbb.a", "libtbb_debug.a", "tbb.lib", "tbb_debug.lib", "tbb12.lib"];
+    find_and_add_lib_dir(&build_dir, &tbb_patterns, "TBB", &target_os);
 
     // External dependencies in nested build directories
     let kissfft_dir = build_dir.join("deps/kissfft_a/src/kissfft_a-build");
