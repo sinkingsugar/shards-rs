@@ -55,6 +55,7 @@ jobs:
         run: |
           git config --system core.longpaths true
           choco install ninja cmake llvm
+          echo "C:\Program Files\LLVM\bin" >> $env:GITHUB_PATH
           echo "CC=clang" >> $env:GITHUB_ENV
           echo "CXX=clang++" >> $env:GITHUB_ENV
 

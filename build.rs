@@ -229,10 +229,7 @@ fn main() {
     println!("cargo:rustc-link-lib=static=boost_chrono");
     println!("cargo:rustc-link-lib=static=boost_date_time");
     println!("cargo:rustc-link-lib=static=boost_random");
-    // boost_stacktrace_basic is Apple-only
-    if is_apple {
-        println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
-    }
+    println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
 
     // Third-party libraries
     if profile == "release" {
