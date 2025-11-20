@@ -32,25 +32,92 @@ fn main() {
     config.define("SHARDS_WITH_EVERYTHING", "OFF");
     config.define("SHARDS_WITH_DEFAULT", "OFF");
 
-    // Default modules (always enabled)
-    config.define("SHARDS_WITH_ANIM", "ON");
-    config.define("SHARDS_WITH_ASSERT", "ON");
-    config.define("SHARDS_WITH_AUDIO", "ON");
-    config.define("SHARDS_WITH_BIGINT", "ON");
-    config.define("SHARDS_WITH_BROTLI", "ON");
-    config.define("SHARDS_WITH_CHANNELS", "ON");
+    // Core modules (always enabled)
     config.define("SHARDS_WITH_CORE", "ON");
-    config.define("SHARDS_WITH_CRDTS", "ON");
-    config.define("SHARDS_WITH_DEBUG", "ON");
-    config.define("SHARDS_WITH_FILEOPS", "ON");
-    config.define("SHARDS_WITH_IMAGING", "ON");
-    config.define("SHARDS_WITH_JSON", "ON");
-    config.define("SHARDS_WITH_OS", "ON");
-    config.define("SHARDS_WITH_REFLECTION", "ON");
+    config.define("SHARDS_WITH_LANGFFI", "ON");
     config.define("SHARDS_WITH_RUN", "ON");
-    config.define("SHARDS_WITH_SNAPPY", "ON");
-    config.define("SHARDS_WITH_SQLITE", "ON");
-    config.define("SHARDS_WITH_STRUCT", "ON");
+
+    // Feature-gated core modules
+    if cfg!(feature = "anim") {
+        config.define("SHARDS_WITH_ANIM", "ON");
+    } else {
+        config.define("SHARDS_WITH_ANIM", "OFF");
+    }
+    if cfg!(feature = "assert") {
+        config.define("SHARDS_WITH_ASSERT", "ON");
+    } else {
+        config.define("SHARDS_WITH_ASSERT", "OFF");
+    }
+    if cfg!(feature = "audio") {
+        config.define("SHARDS_WITH_AUDIO", "ON");
+    } else {
+        config.define("SHARDS_WITH_AUDIO", "OFF");
+    }
+    if cfg!(feature = "bigint") {
+        config.define("SHARDS_WITH_BIGINT", "ON");
+    } else {
+        config.define("SHARDS_WITH_BIGINT", "OFF");
+    }
+    if cfg!(feature = "brotli") {
+        config.define("SHARDS_WITH_BROTLI", "ON");
+    } else {
+        config.define("SHARDS_WITH_BROTLI", "OFF");
+    }
+    if cfg!(feature = "channels") {
+        config.define("SHARDS_WITH_CHANNELS", "ON");
+    } else {
+        config.define("SHARDS_WITH_CHANNELS", "OFF");
+    }
+    if cfg!(feature = "crdts") {
+        config.define("SHARDS_WITH_CRDTS", "ON");
+    } else {
+        config.define("SHARDS_WITH_CRDTS", "OFF");
+    }
+    if cfg!(feature = "debug") {
+        config.define("SHARDS_WITH_DEBUG", "ON");
+    } else {
+        config.define("SHARDS_WITH_DEBUG", "OFF");
+    }
+    if cfg!(feature = "fileops") {
+        config.define("SHARDS_WITH_FILEOPS", "ON");
+    } else {
+        config.define("SHARDS_WITH_FILEOPS", "OFF");
+    }
+    if cfg!(feature = "imaging") {
+        config.define("SHARDS_WITH_IMAGING", "ON");
+    } else {
+        config.define("SHARDS_WITH_IMAGING", "OFF");
+    }
+    if cfg!(feature = "json") {
+        config.define("SHARDS_WITH_JSON", "ON");
+    } else {
+        config.define("SHARDS_WITH_JSON", "OFF");
+    }
+    if cfg!(feature = "os") {
+        config.define("SHARDS_WITH_OS", "ON");
+    } else {
+        config.define("SHARDS_WITH_OS", "OFF");
+    }
+    if cfg!(feature = "reflection") {
+        config.define("SHARDS_WITH_REFLECTION", "ON");
+    } else {
+        config.define("SHARDS_WITH_REFLECTION", "OFF");
+    }
+    if cfg!(feature = "snappy") {
+        config.define("SHARDS_WITH_SNAPPY", "ON");
+    } else {
+        config.define("SHARDS_WITH_SNAPPY", "OFF");
+    }
+    if cfg!(feature = "sqlite") {
+        config.define("SHARDS_WITH_SQLITE", "ON");
+    } else {
+        config.define("SHARDS_WITH_SQLITE", "OFF");
+    }
+    if cfg!(feature = "struct") {
+        config.define("SHARDS_WITH_STRUCT", "ON");
+    } else {
+        config.define("SHARDS_WITH_STRUCT", "OFF");
+    }
 
     // Disabled modules (no feature flags for these)
     config.define("SHARDS_WITH_CLIPBOARD", "OFF");
@@ -125,11 +192,6 @@ fn main() {
     } else {
         config.define("SHARDS_WITH_LOCALSHELL", "OFF");
     }
-    if cfg!(feature = "langffi") {
-        config.define("SHARDS_WITH_LANGFFI", "ON");
-    } else {
-        config.define("SHARDS_WITH_LANGFFI", "OFF");
-    }
     if cfg!(feature = "py") {
         config.define("SHARDS_WITH_PY", "ON");
         config.define("ENABLE_PYTHON_SHARDS", "ON");
@@ -154,15 +216,17 @@ fn main() {
 
     // Build crsql_bundle-rust separately (for SQLite CRDT support)
     // This must be built after the main configure step
-    let cmake_build_dir = dst.join("build");
-    let status = std::process::Command::new("ninja")
-        .arg("-C")
-        .arg(&cmake_build_dir)
-        .arg("cargo-crsql_bundle-rust")
-        .status()
-        .expect("Failed to build crsql_bundle-rust");
-    if !status.success() {
-        panic!("Failed to build crsql_bundle-rust");
+    if cfg!(feature = "sqlite") {
+        let cmake_build_dir = dst.join("build");
+        let status = std::process::Command::new("ninja")
+            .arg("-C")
+            .arg(&cmake_build_dir)
+            .arg("cargo-crsql_bundle-rust")
+            .status()
+            .expect("Failed to build crsql_bundle-rust");
+        if !status.success() {
+            panic!("Failed to build crsql_bundle-rust");
+        }
     }
 
     // Link paths
@@ -229,13 +293,17 @@ fn main() {
     find_and_add_lib_dir(&build_dir, &tbb_patterns, "TBB", &target_os);
 
     // External dependencies in nested build directories
-    let kissfft_dir = build_dir.join("deps/kissfft_a/src/kissfft_a-build");
-    if kissfft_dir.exists() {
-        println!("cargo:rustc-link-search=native={}", kissfft_dir.display());
+    if cfg!(feature = "audio") {
+        let kissfft_dir = build_dir.join("deps/kissfft_a/src/kissfft_a-build");
+        if kissfft_dir.exists() {
+            println!("cargo:rustc-link-search=native={}", kissfft_dir.display());
+        }
     }
-    let mozjpeg_dir = build_dir.join("deps/mozjpeg_a/src/mozjpeg_a-build");
-    if mozjpeg_dir.exists() {
-        println!("cargo:rustc-link-search=native={}", mozjpeg_dir.display());
+    if cfg!(feature = "imaging") {
+        let mozjpeg_dir = build_dir.join("deps/mozjpeg_a/src/mozjpeg_a-build");
+        if mozjpeg_dir.exists() {
+            println!("cargo:rustc-link-search=native={}", mozjpeg_dir.display());
+        }
     }
 
     // Rust libraries built by CMake's corrosion (crsql, etc)
@@ -295,26 +363,40 @@ fn main() {
     } else {
         println!("cargo:rustc-link-lib=static=tbb_debug");
     }
-    println!("cargo:rustc-link-lib=static=kcp");
-    println!("cargo:rustc-link-lib=static=TracyClient");
+
+    if cfg!(feature = "network") {
+        println!("cargo:rustc-link-lib=static=kcp");
+    }
+    
+    // println!("cargo:rustc-link-lib=static=TracyClient");
 
     // Compression libraries
-    println!("cargo:rustc-link-lib=static=brotlicommon");
-    println!("cargo:rustc-link-lib=static=brotlidec");
-    println!("cargo:rustc-link-lib=static=brotlienc");
-    println!("cargo:rustc-link-lib=static=snappy");
+    if cfg!(feature = "brotli") {
+        println!("cargo:rustc-link-lib=static=brotlicommon");
+        println!("cargo:rustc-link-lib=static=brotlidec");
+        println!("cargo:rustc-link-lib=static=brotlienc");
+    }
+    if cfg!(feature = "snappy") {
+        println!("cargo:rustc-link-lib=static=snappy");
+    }
 
     // SQLite
-    println!("cargo:rustc-link-lib=static=sqlite-static");
-    println!("cargo:rustc-link-lib=static=sqlite-vec");
-    println!("cargo:rustc-link-lib=static=crsql_bundle");
+    if cfg!(feature = "sqlite") {
+        println!("cargo:rustc-link-lib=static=sqlite-static");
+        println!("cargo:rustc-link-lib=static=sqlite-vec");
+        println!("cargo:rustc-link-lib=static=crsql_bundle");
+    }
 
     // Audio
-    println!("cargo:rustc-link-lib=static=opus");
-    println!("cargo:rustc-link-lib=static=kissfft-float");
+    if cfg!(feature = "audio") {
+        println!("cargo:rustc-link-lib=static=opus");
+        println!("cargo:rustc-link-lib=static=kissfft-float");
+    }
 
     // Imaging
-    println!("cargo:rustc-link-lib=static=jpeg");
+    if cfg!(feature = "imaging") {
+        println!("cargo:rustc-link-lib=static=jpeg");
+    }
 
     // // SDL3 is used by core for SDL_getenv etc
     // println!("cargo:rustc-link-lib=static=SDL3");
@@ -469,7 +551,6 @@ fn init_submodules(shards_dir: &Path) {
         "deps/utf8.h",
         "deps/entt",
         "deps/kcp",
-        // "deps/SDL3",
         "deps/tinygltf",
         "deps/draco",
         "deps/sqlite/cr-sqlite",

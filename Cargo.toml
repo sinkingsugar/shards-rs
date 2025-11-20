@@ -15,18 +15,41 @@ path = "src/bin/shards.rs"
 required-features = ["cli"]
 
 [features]
-default = ["cli", "core", "fs", "network", "langffi", "random"]
+default = ["cli", "core", "langffi", "fs", "random", "assert", "bigint", "channels", "json", "reflection", "struct"]
 cli = []
 full = [
     "ml", "core", "crypto", "csv", "fs",
     "http", "network", "pdf", "ssh", "svg", "random",
-    "markdown", "localshell", "langffi", "py"
+    "markdown", "localshell", "langffi", "py",
+    "anim", "assert", "audio", "bigint", "brotli", "channels",
+    "crdts", "debug", "fileops", "imaging", "json", "os",
+    "reflection", "snappy", "sqlite", "struct"
 ]
 
 # GFX/EGUI disabled - these crates have nested workspaces
 # Enable with local symlink only for now
 # gfx = ["dep:gfx"]
 # egui = ["dep:shards-egui-register", "dep:shards-inputs-debug-ui"]
+
+# Core modules (built into C++ union)
+anim = []
+assert = []
+audio = []
+bigint = []
+brotli = []
+channels = []
+crdts = []
+debug = []
+fileops = []
+imaging = []
+json = []
+os = []
+reflection = []
+snappy = []
+sqlite = []
+struct = []
+
+# External modules (Rust crates)
 ml = ["dep:shards-ml"]
 core = ["dep:shards-core"]
 crypto = ["dep:shards-crypto"]
