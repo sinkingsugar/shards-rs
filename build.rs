@@ -227,7 +227,10 @@ fn main() {
     println!("cargo:rustc-link-lib=static=boost_chrono");
     println!("cargo:rustc-link-lib=static=boost_date_time");
     println!("cargo:rustc-link-lib=static=boost_random");
-    println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
+    // boost_stacktrace_basic is macOS-only
+    if target_os == "macos" || target_os == "ios" {
+        println!("cargo:rustc-link-lib=static=boost_stacktrace_basic");
+    }
 
     // Third-party libraries
     if profile == "release" {
