@@ -20,6 +20,9 @@ fn main() {
     // We ARE the Rust union, so skip CMake's Rust build
     config.define("SHARDS_NO_RUST_UNION", "ON");
 
+    // We don't need gfx and sdl things
+    config.define("SHARDS_NO_SDL", "ON");
+
     // On Windows, force release CRT (/MD) even in debug builds
     // Rust always uses release CRT, so C++ code must match
     if target_os == "windows" {
@@ -522,6 +525,8 @@ fn find_shards_source() -> String {
     let git_checkouts = Path::new(&cargo_home).join("git").join("checkouts");
 
     // Look for shards checkout directory
+    let mut candidates = Vec::new();
+
     if let Ok(entries) = std::fs::read_dir(&git_checkouts) {
         for entry in entries.flatten() {
             let name = entry.file_name();
@@ -532,18 +537,30 @@ fn find_shards_source() -> String {
                     for rev in revisions.flatten() {
                         let rev_path = rev.path();
                         if rev_path.join("CMakeLists.txt").exists() {
-                            let path_str = rev_path.to_string_lossy().to_string();
-                            println!("cargo:warning=Using Cargo-cached shards at {}", path_str);
-
-                            // Initialize submodules needed for CMake
-                            init_submodules(&rev_path);
-
-                            return path_str;
+                            // Get modification time to find the most recent checkout
+                            if let Ok(metadata) = rev_path.metadata() {
+                                if let Ok(modified) = metadata.modified() {
+                                    candidates.push((rev_path, modified));
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    // Use the most recently modified checkout (should be what Cargo just fetched)
+    if !candidates.is_empty() {
+        candidates.sort_by_key(|(_, time)| *time);
+        let (rev_path, _) = candidates.last().unwrap();
+        let path_str = rev_path.to_string_lossy().to_string();
+        println!("cargo:warning=Using Cargo-cached shards at {}", path_str);
+
+        // Initialize submodules needed for CMake
+        init_submodules(rev_path);
+
+        return path_str;
     }
 
     panic!(

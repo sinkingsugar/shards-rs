@@ -1,3 +1,5 @@
+set fallback := true
+
 # Default recipe
 default:
     @just --list
