@@ -5606,7 +5606,7 @@ dependencies = [
 [[package]]
 name = "shards"
 version = "0.1.1"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "approx",
  "bindgen",
@@ -5622,7 +5622,7 @@ dependencies = [
 [[package]]
 name = "shards-core"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "bs58",
  "chrono",
@@ -5644,7 +5644,7 @@ dependencies = [
 [[package]]
 name = "shards-crypto"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "argon2",
  "base64 0.22.1",
@@ -5677,7 +5677,7 @@ dependencies = [
 [[package]]
 name = "shards-csv"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "csv",
@@ -5715,7 +5715,7 @@ dependencies = [
 [[package]]
 name = "shards-fileops"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "dirs",
@@ -5730,7 +5730,7 @@ dependencies = [
 [[package]]
 name = "shards-fs"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "ignore",
@@ -5743,7 +5743,7 @@ dependencies = [
 [[package]]
 name = "shards-http"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "lazy_static",
@@ -5756,7 +5756,7 @@ dependencies = [
 [[package]]
 name = "shards-lang"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "cbindgen",
  "clap 4.5.53",
@@ -5781,7 +5781,7 @@ dependencies = [
 [[package]]
 name = "shards-langffi"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "cbindgen",
  "flexbuffers",
@@ -5794,7 +5794,7 @@ dependencies = [
 [[package]]
 name = "shards-localshell"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "lazy_static",
@@ -5806,7 +5806,7 @@ dependencies = [
 [[package]]
 name = "shards-macro"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "convert_case",
  "crc 3.3.0",
@@ -5820,7 +5820,7 @@ dependencies = [
 [[package]]
 name = "shards-markdown"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "htmd",
@@ -5832,7 +5832,7 @@ dependencies = [
 [[package]]
 name = "shards-ml"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -5852,7 +5852,7 @@ dependencies = [
 [[package]]
 name = "shards-network"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "anyhow",
  "compile-time-crc32",
@@ -5877,7 +5877,7 @@ dependencies = [
 [[package]]
 name = "shards-pdf"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "lazy_static",
@@ -5888,7 +5888,7 @@ dependencies = [
 [[package]]
 name = "shards-py"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "lazy_static",
@@ -5901,7 +5901,7 @@ dependencies = [
 [[package]]
 name = "shards-random"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "lazy_static",
@@ -5913,7 +5913,7 @@ dependencies = [
 [[package]]
 name = "shards-svg"
 version = "0.1.0"
-source = "git+https://github.com/fragcolor-xyz/shards.git?rev=7cd8d7789b3ac23041e25ee214a9581c3ded07a1#7cd8d7789b3ac23041e25ee214a9581c3ded07a1"
+source = "git+https://github.com/fragcolor-xyz/shards.git?rev=c6ec63ea6c45a402040ac3539fa74b4e496934a4#c6ec63ea6c45a402040ac3539fa74b4e496934a4"
 dependencies = [
  "compile-time-crc32",
  "lazy_static",
