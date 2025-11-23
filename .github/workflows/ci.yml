@@ -60,6 +60,20 @@ jobs:
           echo "CXX=C:\Program Files\LLVM\bin\clang++.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "ASM=C:\Program Files\LLVM\bin\clang.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
+      - name: Compute Cargo.lock hash
+        id: cargo-lock-hash
+        shell: bash
+        run: |
+          if [ -f Cargo.lock ]; then
+            if command -v sha256sum &> /dev/null; then
+              echo "hash=$(sha256sum Cargo.lock | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+            else
+              echo "hash=$(shasum -a 256 Cargo.lock | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "hash=no-lock" >> $GITHUB_OUTPUT
+          fi
+
       - name: Cache Cargo
         uses: actions/cache@v4
         with:
@@ -67,7 +81,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') || 'no-lock' }}
+          key: ${{ runner.os }}-cargo-${{ steps.cargo-lock-hash.outputs.hash }}
           restore-keys: |
             ${{ runner.os }}-cargo-
 
