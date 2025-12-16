@@ -92,6 +92,11 @@ fn main() {
     } else {
         config.define("SHARDS_WITH_FILEOPS", "OFF");
     }
+    if cfg!(feature = "geo") {
+        config.define("SHARDS_WITH_GEO", "ON");
+    } else {
+        config.define("SHARDS_WITH_GEO", "OFF");
+    }
     if cfg!(feature = "imaging") {
         config.define("SHARDS_WITH_IMAGING", "ON");
     } else {

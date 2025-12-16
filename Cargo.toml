@@ -47,6 +47,7 @@ channels = []
 crdts = []
 debug = []
 fileops = []
+geo = ["dep:shards-geo"]
 imaging = []
 json = []
 os = []
@@ -76,12 +77,12 @@ langffi = ["dep:shards-langffi"]
 
 [dependencies]
 # All shards crates from git - workspace resolves them
-shards = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e" }
-shards-lang = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e" }
-shards-fileops = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e" }
+shards = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49" }
+shards-lang = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49" }
+shards-fileops = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49" }
 
 # CR-SQLite bundle - disabled due to package resolution issues
-# crsql_bundle = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", features = ["static", "omit_load_extension"] }
+# crsql_bundle = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", features = ["static", "omit_load_extension"] }
 
 # GFX/EGUI disabled - these have nested [workspace] sections
 # gfx = { git = "...", optional = true }
@@ -89,22 +90,23 @@ shards-fileops = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "3
 # shards-inputs-debug-ui = { git = "...", optional = true }
 
 # ML
-shards-ml = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", features = ["metal", "accelerate"], optional = true }
+shards-ml = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", features = ["metal", "accelerate"], optional = true }
 
 # Core modules
-shards-core = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", features = ["default"], optional = true }
-shards-crypto = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-csv = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-fs = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", features = ["rfd-enabled", "rfd-xdg"], optional = true }
-shards-http = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-langffi = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-localshell = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-markdown = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-network = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-pdf = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-random = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-# shards-ssh = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
-shards-svg = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "388c102ac51329b2e7a72d580d91b8d7790cb55e", optional = true }
+shards-core = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", features = ["default"], optional = true }
+shards-crypto = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-csv = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-fs = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", features = ["rfd-enabled", "rfd-xdg"], optional = true }
+shards-geo = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-http = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-langffi = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-localshell = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-markdown = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-network = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-pdf = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-random = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+# shards-ssh = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-svg = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
 
 # Tracy (optional)
 tracy-client = { version = "0.17.4", optional = true }

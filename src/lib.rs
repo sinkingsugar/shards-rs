@@ -46,6 +46,9 @@ pub use shards_csv;
 #[cfg(feature = "fs")]
 pub use shards_fs;
 
+#[cfg(feature = "geo")]
+pub use shards_geo;
+
 #[cfg(feature = "http")]
 pub use shards_http;
 
