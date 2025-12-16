@@ -98,7 +98,7 @@ shards-crypto = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b
 shards-csv = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
 shards-fs = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", features = ["rfd-enabled", "rfd-xdg"], optional = true }
 shards-geo = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
-shards-http = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
+shards-http = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", features = ["native-tls"], optional = true }
 shards-langffi = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
 shards-localshell = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }
 shards-markdown = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5b65a62459760041e17602785e38713f31141b49", optional = true }

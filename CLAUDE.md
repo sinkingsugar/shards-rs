@@ -34,3 +34,13 @@ When adding support for a new Rust module from the shards repository:
 
 - **Rust modules** (like geo, csv, fs): Built by Cargo as dependencies, use `["dep:shards-xxx"]` feature syntax
 - **C++ modules** (like anim, channels): Built by CMake, use empty `[]` feature syntax, no Cargo dependency needed
+
+## Module-Specific Features
+
+Some modules require specific features to be enabled:
+
+- **shards-http**: Requires `native-tls` or `rustls` feature for TLS support (methods like `danger_accept_invalid_certs` need this)
+- **shards-fs**: Uses `rfd-enabled` and `rfd-xdg` features for file dialogs
+- **shards-core**: Uses `default` features
+
+Check the module's CMakeLists.txt in shards to see what features it uses (look for `FEATURES` argument in `add_rust_library`).
