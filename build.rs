@@ -221,21 +221,6 @@ fn main() {
 
     let dst = config.build();
 
-    // Build crsql_bundle-rust separately (for SQLite CRDT support)
-    // This must be built after the main configure step
-    if cfg!(feature = "sqlite") {
-        let cmake_build_dir = dst.join("build");
-        let status = std::process::Command::new("ninja")
-            .arg("-C")
-            .arg(&cmake_build_dir)
-            .arg("cargo-crsql_bundle-rust")
-            .status()
-            .expect("Failed to build crsql_bundle-rust");
-        if !status.success() {
-            panic!("Failed to build crsql_bundle-rust");
-        }
-    }
-
     // Link paths
     let build_dir = dst.join("build");
     let lib_dir = build_dir.join("lib");
@@ -312,7 +297,7 @@ fn main() {
         }
     }
 
-    // Rust libraries built by CMake's corrosion (crsql, etc)
+    // Rust libraries built by CMake's corrosion
     let target_arch = env::var("TARGET").unwrap_or_else(|_| "aarch64-apple-darwin".to_string());
 
     // Tracy feature disabled - use standard profile names
@@ -394,7 +379,6 @@ fn main() {
     if cfg!(feature = "sqlite") {
         println!("cargo:rustc-link-lib=static=sqlite-static");
         println!("cargo:rustc-link-lib=static=sqlite-vec");
-        println!("cargo:rustc-link-lib=static=crsql_bundle");
     }
 
     // Audio
@@ -410,20 +394,17 @@ fn main() {
 
     // ML/LLM (llama.cpp and ggml)
     if cfg!(feature = "ml") {
+        println!("cargo:rustc-link-lib=static=llama-common");
+        println!("cargo:rustc-link-lib=static=llama-common-base");
         println!("cargo:rustc-link-lib=static=llama");
         println!("cargo:rustc-link-lib=static=ggml");
         println!("cargo:rustc-link-lib=static=ggml-base");
         println!("cargo:rustc-link-lib=static=ggml-cpu");
-        println!("cargo:rustc-link-lib=static=ggml-blas");
         if is_apple {
+            // ggml-blas is only built on Apple (Accelerate)
+            println!("cargo:rustc-link-lib=static=ggml-blas");
             println!("cargo:rustc-link-lib=static=ggml-metal");
         }
-    }
-
-    // OpenSSL/LibreSSL (needed by HTTP module via boost::beast)
-    if cfg!(feature = "http") {
-        println!("cargo:rustc-link-lib=static=ssl");
-        println!("cargo:rustc-link-lib=static=crypto");
     }
 
     // // SDL3 is used by core for SDL_getenv etc

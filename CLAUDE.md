@@ -39,7 +39,7 @@ When adding support for a new Rust module from the shards repository:
 
 Some modules require specific features to be enabled:
 
-- **shards-http**: Requires `native-tls` or `rustls` feature for TLS support (methods like `danger_accept_invalid_certs` need this)
+- **shards-http**: Requires a TLS feature (`native-tls`, `rustls` or `rustls-ring`); upstream uses `rustls-ring` + `socks`, which keeps OpenSSL out of the build
 - **shards-fs**: Uses `rfd-enabled` and `rfd-xdg` features for file dialogs
 - **shards-core**: Uses `default` features
 
