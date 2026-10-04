@@ -84,7 +84,6 @@ pub use shards_py;
 extern "C" {
     fn shardsInterface(version: u32) -> *mut shards::shardsc::SHCore;
     fn shards_install_signal_handlers();
-    fn shards_decompress_strings();
 }
 
 /// Initialize the shards runtime.
@@ -103,14 +102,13 @@ pub fn init() {
     });
 }
 
-/// Initialize with decompressed help strings.
+/// Initialize the shards runtime.
 ///
-/// Use this if you need access to shard documentation/help text.
+/// Help strings used to be compressed and needed decompressing here; upstream
+/// now always keeps them, so this is the same as [`init`].
+#[deprecated(note = "help strings are always available now; use `init`")]
 pub fn init_with_docs() {
     init();
-    unsafe {
-        shards_decompress_strings();
-    }
 }
 
 /// Run a shards script file.
