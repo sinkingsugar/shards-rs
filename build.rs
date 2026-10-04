@@ -320,7 +320,6 @@ fn main() {
     // Boost libraries
     println!("cargo:rustc-link-lib=static=boost_filesystem");
     println!("cargo:rustc-link-lib=static=boost_container");
-    println!("cargo:rustc-link-lib=static=boost_context");
     println!("cargo:rustc-link-lib=static=boost_thread");
     println!("cargo:rustc-link-lib=static=boost_atomic");
     println!("cargo:rustc-link-lib=static=boost_chrono");
@@ -361,6 +360,10 @@ fn main() {
 
     if cfg!(feature = "network") {
         println!("cargo:rustc-link-lib=static=kcp");
+    }
+    if cfg!(feature = "http") {
+        // Only built for the HTTP module (Boost.Beast)
+        println!("cargo:rustc-link-lib=static=boost_context");
     }
 
     // Tracy feature disabled - requires GFX modules
@@ -510,6 +513,27 @@ fn find_shards_source() -> String {
 
     let git_checkouts = Path::new(&cargo_home).join("git").join("checkouts");
 
+    // Prefer the checkout matching the rev pinned in our Cargo.toml, so the C++ side
+    // always matches the Rust crates even when several shards revs are cached.
+    // Cargo names checkout directories by the short commit hash.
+    if let Some(rev) = pinned_shards_rev() {
+        let short = &rev[..rev.len().min(7)];
+        if let Ok(entries) = std::fs::read_dir(&git_checkouts) {
+            for entry in entries.flatten() {
+                if !entry.file_name().to_string_lossy().starts_with("shards-") {
+                    continue;
+                }
+                let rev_path = entry.path().join(short);
+                if rev_path.join("CMakeLists.txt").exists() {
+                    let path_str = rev_path.to_string_lossy().to_string();
+                    println!("cargo:warning=Using Cargo-cached shards at {}", path_str);
+                    init_submodules(&rev_path);
+                    return path_str;
+                }
+            }
+        }
+    }
+
     // Look for shards checkout directory
     let mut candidates = Vec::new();
 
@@ -609,4 +633,17 @@ fn init_submodules(shards_dir: &Path) {
             println!("cargo:warning=Failed to initialize some submodules - CMake may fail");
         }
     }
+}
+
+/// The shards git rev pinned for the `shards` dependency in our Cargo.toml.
+fn pinned_shards_rev() -> Option<String> {
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").ok()?;
+    let manifest = std::fs::read_to_string(Path::new(&manifest_dir).join("Cargo.toml")).ok()?;
+    println!("cargo:rerun-if-changed=Cargo.toml");
+    let line = manifest
+        .lines()
+        .find(|l| l.trim_start().starts_with("shards = ") && l.contains("rev = \""))?;
+    let start = line.find("rev = \"")? + "rev = \"".len();
+    let end = start + line[start..].find('"')?;
+    Some(line[start..end].to_string())
 }

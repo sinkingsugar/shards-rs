@@ -20,7 +20,10 @@ path = "src/bin/shards.rs"
 required-features = ["cli"]
 
 [features]
-default = ["cli", "core", "langffi", "fs", "random", "assert", "bigint", "channels", "json", "reflection", "struct"]
+# The language runtime (core + langffi) is always built; everything else is opt-in.
+# Embedders that only want the scripting language can use `default-features = false`
+# and pick the modules they need.
+default = ["cli", "fs", "random", "assert", "bigint", "channels", "json", "reflection", "struct"]
 cli = []
 full = [
     "ml", "core", "crypto", "csv", "fs",
@@ -46,7 +49,7 @@ brotli = []
 channels = []
 crdts = []
 debug = []
-fileops = []
+fileops = ["dep:shards-fileops"]
 geo = ["dep:shards-geo"]
 imaging = []
 json = []
@@ -58,10 +61,11 @@ struct = []
 
 # External modules (Rust crates)
 ml = ["dep:shards-ml"]
-core = ["dep:shards-core"]
+# core and langffi are always linked (the C++ runtime needs them); kept for compatibility
+core = []
 crypto = ["dep:shards-crypto"]
 csv = ["dep:shards-csv"]
-fs = ["dep:shards-fs"]
+fs = ["dep:shards-fs", "dep:rfd", "dep:zbus"]
 http = ["dep:shards-http"]
 network = ["dep:shards-network"]
 pdf = ["dep:shards-pdf"]
@@ -70,7 +74,7 @@ svg = ["dep:shards-svg"]
 random = ["dep:shards-random"]
 markdown = ["dep:shards-markdown"]
 localshell = ["dep:shards-localshell"]
-langffi = ["dep:shards-langffi"]
+langffi = []
 
 # Profiling - disabled (requires GFX)
 # tracy = ["tracy-client"]
@@ -79,7 +83,7 @@ langffi = ["dep:shards-langffi"]
 # All shards crates from git - workspace resolves them
 shards = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f" }
 shards-lang = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f" }
-shards-fileops = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f" }
+shards-fileops = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 
 # CR-SQLite bundle - disabled due to package resolution issues
 # crsql_bundle = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", features = ["static", "omit_load_extension"] }
@@ -93,13 +97,13 @@ shards-fileops = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5
 shards-ml = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 
 # Core modules
-shards-core = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", features = ["default"], optional = true }
+shards-core = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", features = ["default"] }
 shards-crypto = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 shards-csv = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 shards-fs = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", features = ["rfd-enabled", "rfd-xdg"], optional = true }
 shards-geo = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 shards-http = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", features = ["rustls-ring", "socks"], optional = true }
-shards-langffi = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
+shards-langffi = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f" }
 shards-localshell = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 shards-markdown = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
 shards-network = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2df4263dc009f7349ec881885578fe8f2ee3f", optional = true }
@@ -111,10 +115,10 @@ shards-svg = { git = "https://github.com/fragcolor-xyz/shards.git", rev = "5cf2d
 # Tracy (optional)
 tracy-client = { version = "0.17.4", optional = true }
 
-# Linux-specific: rfd with xdg-portal needs async runtime
+# Linux-specific: rfd with xdg-portal needs async runtime (only for the fs feature)
 [target.'cfg(target_os = "linux")'.dependencies]
-zbus = { version = "4", default-features = true }
-rfd = { git = "https://github.com/shards-lang/rfd.git", branch = "shards-objc2", features = ["async-std"] }
+zbus = { version = "4", default-features = true, optional = true }
+rfd = { git = "https://github.com/shards-lang/rfd.git", branch = "shards-objc2", features = ["async-std"], optional = true }
 
 # Apple-only: metal/accelerate (mirrors upstream shards CMake, candle 0.11 metal needs objc2)
 [target.'cfg(target_vendor = "apple")'.dependencies]

@@ -30,6 +30,12 @@ When adding support for a new Rust module from the shards repository:
 
 4. **Update the git rev** if the module isn't in the current pinned revision.
 
+## Always-On vs Optional
+
+- `core` and `langffi` are always linked: build.rs always enables the C++ core/langffi modules and they reference symbols from `shards-core`/`shards-langffi`. The features are kept as no-ops.
+- Every other module must be fully optional: Cargo dep behind its feature, CMake define, and any `cargo:rustc-link-lib` that only that module builds (e.g. `boost_context` is http-only).
+- Verify minimal builds link: `cargo build --no-default-features --features cli` (an rlib-only build won't catch missing libs/symbols).
+
 ## Module Types
 
 - **Rust modules** (like geo, csv, fs): Built by Cargo as dependencies, use `["dep:shards-xxx"]` feature syntax

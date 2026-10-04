@@ -10,32 +10,30 @@ Shards is a visual/textual programming language designed for interactive applica
 
 ## Features
 
-The crate supports modular feature flags to control which Shards modules are compiled:
+The language runtime (`core` + `langffi`) is always built. Every other module is a
+feature flag, so an embedder only pays for what it uses.
 
 ### Default Features
 - `cli` - Command-line interface (`shards` binary)
-- `core`, `langffi` - Core language features
-- `fs` - File system operations
+- `fs` - File system operations (pulls in native file dialogs on Linux)
 - `random`, `assert`, `bigint`, `channels`, `json`, `reflection`, `struct` - Core modules
 
 ### Optional Features
-- `ml` - Machine learning
+- `ml` - Machine learning (candle / llama.cpp)
 - `crypto` - Cryptography
 - `csv` - CSV file handling
+- `geo` - Geospatial
 - `http` - HTTP client/server
 - `network` - Networking primitives
 - `pdf`, `svg`, `imaging` - Document and image processing
-- `ssh` - SSH client
 - `markdown` - Markdown parsing
 - `localshell` - Local shell execution
-- `py` - Python interop (RustPython)
-- `audio` - Audio processing
+- `anim`, `audio`, `debug`, `fileops`, `os` - Misc modules
 - `brotli`, `snappy` - Compression
 - `crdts` - Conflict-free replicated data types
-- `sqlite` - SQLite database
-- And more...
+- `sqlite` - SQLite database (with cr-sqlite and sqlite-vec)
 
-Use `full` feature to enable all modules.
+Use the `full` feature to enable all modules (except `geo`).
 
 ## Usage
 
@@ -43,8 +41,25 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-shards-embed = "0.1"
+shards-embed = { git = "https://github.com/sinkingsugar/shards-rs" }
 ```
+
+### Language only
+
+To embed just the scripting language, turn off default features and add back the
+modules your scripts use:
+
+```toml
+[dependencies]
+shards-embed = { git = "https://github.com/sinkingsugar/shards-rs", default-features = false, features = ["json", "struct"] }
+```
+
+With no features at all you still get the language and its core shards (wires, flow control,
+math, sequences, etc.); shards from disabled modules simply don't exist at runtime.
+
+If you enable `ml`, copy the `[patch."https://github.com/huggingface/candle.git"]` section
+from this crate's `Cargo.toml` into your own: Cargo only applies `[patch]` from the
+top-level workspace.
 
 Basic example:
 

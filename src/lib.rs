@@ -19,6 +19,7 @@ pub use shards::*;
 pub use shards_lang;
 
 // Re-export fileops (forces linking of shardsRegister_fileops_rust)
+#[cfg(feature = "fileops")]
 pub use shards_fileops;
 
 // CR-SQLite bundle disabled due to package resolution issues
@@ -34,7 +35,7 @@ pub use shards_fileops;
 #[cfg(feature = "ml")]
 pub use shards_ml;
 
-#[cfg(feature = "core")]
+// core and langffi are always linked: the C++ runtime references their symbols
 pub use shards_core;
 
 #[cfg(feature = "crypto")]
@@ -74,7 +75,6 @@ pub use shards_markdown;
 #[cfg(feature = "localshell")]
 pub use shards_localshell;
 
-#[cfg(feature = "langffi")]
 pub use shards_langffi;
 
 #[cfg(feature = "py")]
