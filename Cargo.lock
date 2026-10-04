@@ -10948,8 +10948,3 @@ source = "git+https://github.com/shards-lang/tar-rs?rev=6d26c0d1724326c8c1b06eaa
 name = "tracy-client"
 version = "0.15.0"
 source = "git+https://github.com/nagisa/rust_tracy_client?tag=tracy-client-v0.15.0#d15b1ea01c6c9a496c2f169a212acd5b17fd0b1a"
-
-[[patch.unused]]
-name = "candle-kernels"
-version = "0.11.0"
-source = "git+https://github.com/shards-lang/candle.git?branch=shards-0.11#55014f7b1ef378315eaa80288fb7bcb8fcaccfc2"

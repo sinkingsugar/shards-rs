@@ -10,6 +10,10 @@ fn main() {
     let is_apple = target_vendor == "apple";
 
     // Find shards source - either local or Cargo-cached
+    // rust-toolchain.toml only applies when building inside this repo; dependents
+    // use their own toolchain, so at least tell them when it is newer than ours.
+    check_toolchain();
+
     let shards_dir = find_shards_source();
 
     let mut config = Config::new(&shards_dir);
@@ -646,4 +650,43 @@ fn pinned_shards_rev() -> Option<String> {
     let start = line.find("rev = \"")? + "rev = \"".len();
     let end = start + line[start..].find('"')?;
     Some(line[start..end].to_string())
+}
+
+/// Warn when the compiler is newer than the nightly pinned in rust-toolchain.toml.
+fn check_toolchain() {
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap_or_default();
+    let toolchain_file = Path::new(&manifest_dir).join("rust-toolchain.toml");
+    println!("cargo:rerun-if-changed={}", toolchain_file.display());
+    let Ok(contents) = std::fs::read_to_string(&toolchain_file) else {
+        return;
+    };
+    // channel = "nightly-YYYY-MM-DD"
+    let Some(pinned) = contents
+        .lines()
+        .find_map(|l| l.trim().strip_prefix("channel = \"nightly-"))
+        .and_then(|l| l.strip_suffix('"'))
+        .map(str::to_string)
+    else {
+        return;
+    };
+
+    let rustc = env::var("RUSTC").unwrap_or_else(|_| "rustc".to_string());
+    let Ok(out) = Command::new(rustc).arg("-vV").output() else {
+        return;
+    };
+    let info = String::from_utf8_lossy(&out.stdout);
+    let version = info.lines().next().unwrap_or("unknown rustc");
+    let commit_date = info.lines().find_map(|l| l.strip_prefix("commit-date: "));
+
+    // A nightly's commit-date is the day before its channel date, so ISO date
+    // comparison against the channel date accepts the pinned nightly itself.
+    if let Some(date) = commit_date {
+        if date > pinned.as_str() {
+            println!(
+                "cargo:warning=shards-embed is tested with nightly-{pinned}, but this build uses {version}; \
+                 newer compilers may fail to build shards dependencies. \
+                 Pin it with rust-toolchain.toml in your project if you hit errors."
+            );
+        }
+    }
 }

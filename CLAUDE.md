@@ -30,6 +30,12 @@ When adding support for a new Rust module from the shards repository:
 
 4. **Update the git rev** if the module isn't in the current pinned revision.
 
+## Bumping Shards
+
+- Replace every rev in Cargo.toml, then `cargo update -p shards`.
+- Sync `rust-toolchain.toml` with `rust.version` in the shards rev (CI installs from it).
+- Diff upstream `[patch]` sections in the shards root Cargo.toml: patches don't propagate to dependents, so mirror them here.
+
 ## Always-On vs Optional
 
 - `core` and `langffi` are always linked: build.rs always enables the C++ core/langffi modules and they reference symbols from `shards-core`/`shards-langffi`. The features are kept as no-ops.

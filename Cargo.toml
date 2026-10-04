@@ -153,7 +153,7 @@ candle-core = { git = "https://github.com/shards-lang/candle.git", branch = "sha
 candle-nn = { git = "https://github.com/shards-lang/candle.git", branch = "shards-0.11" }
 candle-transformers = { git = "https://github.com/shards-lang/candle.git", branch = "shards-0.11" }
 candle-metal-kernels = { git = "https://github.com/shards-lang/candle.git", branch = "shards-0.11" }
-candle-kernels = { git = "https://github.com/shards-lang/candle.git", branch = "shards-0.11" }
+# candle-kernels (CUDA) omitted: unused here, and as an unused patch it makes Cargo.lock ordering unstable
 candle-ug = { git = "https://github.com/shards-lang/candle.git", branch = "shards-0.11" }
 
 [profile.dev.package]

@@ -1,0 +1,3 @@
+# Keep in sync with rust.version in the pinned shards rev
+[toolchain]
+channel = "nightly-2025-12-16"

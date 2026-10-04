@@ -28,8 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Toolchain is pinned in rust-toolchain.toml (mirrors shards' rust.version)
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@nightly
+        shell: bash
+        run: rustup toolchain install && rustc --version
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
